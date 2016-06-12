@@ -1,0 +1,13 @@
+<div class="contextual">
+  <%= link_to 'new', new_project_product_path(@project),
+              :class => 'icon icon-add'%>
+
+  <%= link_to l(:button_delete), project_product_path(@project, @product),
+              method: :delete, data: { confirm: 'Are you sure?' }, :class => 'icon icon-del'  %>
+
+</div>
+<h2>Edit Product</h2>
+
+<%= form_for @product, url: project_product_path(@project, @product), method: :put do |f| %>
+    <%= render partial: 'form', locals: {f: f}    %>
+<% end %>

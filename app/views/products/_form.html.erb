@@ -1,0 +1,37 @@
+<%= error_messages_for 'product' %>
+<div class="box tabular">
+  <div id="all_attributes">
+    <div class="splitcontent">
+      <%= labelled_fields_for :product, @product do |f| %>
+          <p>
+            <%= f.text_field :title, {:required => true} %>
+          </p>
+
+          <p>
+            <%= f.text_area :description, :cols => 60,:rows => (@product.description.blank? ? 10 : [[10, @product.description.length / 50].max, 100].min), :required => true  %>
+          </p>
+          <p>
+            <% currencies = ['usd', 'eur', 'cad'] %>
+            <%= f.select :currency, options_for_select(currencies, @product.currency), {:required => true} %>
+          </p>
+          <p>
+            <%= f.number_field :price, {:required => true}  %>
+          </p>
+
+          <p>
+            <%= f.number_field :msrp, {:required => true}%>
+          </p>
+
+          <p>
+            <%= f.number_field :unit_price, {:required => true}  %>
+          </p>
+
+      <% end %>
+
+      <p>
+        <%= f.submit %>
+      </p>
+    </div>
+  </div>
+</div>
+<%= wikitoolbar_for 'product_description' %>

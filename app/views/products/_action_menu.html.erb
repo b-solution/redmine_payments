@@ -1,0 +1,10 @@
+<div class="contextual">
+  <%= link_to 'new', new_project_product_path(@project),
+              :class => 'icon icon-add' if params[:action] == 'index' %>
+  <% if params[:action] != 'index' %>
+      <%= link_to l(:button_edit), edit_project_product_path(@project, @product),
+                  :class => 'icon icon-edit'  %>
+      <%= link_to l(:button_delete), project_product_path(@project, @product),
+                  method: :delete, data: { confirm: 'Are you sure?' }, :class => 'icon icon-del'  %>
+  <% end %>
+</div>
