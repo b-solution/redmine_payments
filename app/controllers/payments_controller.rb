@@ -20,14 +20,16 @@ class PaymentsController < ApplicationController
          order.status = 'declined'
        end
      else # capture
-       order.status = 'Capture'
+       order.status = 'capture'
      end
    end
    order.save
 
-   order_items.each do |item|
-     product  = Product.where(product_uuid: item).first
-     order.add_item(product.id) if product
+   if order_items.present? and order_items.is_a?(Array)
+     order_items.each do |item|
+       product  = Product.where(product_uuid: item).first
+       order.add_item(product.id) if product
+     end
    end
    attrs = order.attributes
    render json: attrs.except(:id)
@@ -58,7 +60,7 @@ class PaymentsController < ApplicationController
    cus_id = order.charge_id_stripe
    price = order.products.map(&:price).sum
    currency = order.products.first.currency
-   result = charge_customer(cus_id, price, currency)
+   result = charge_customer(cus_id, price * 100, currency)
    json= {redirect_url: params[:redirect_url]}
    if result['paid']
      json.merge!(status: 'paid')

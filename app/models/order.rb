@@ -14,13 +14,15 @@ class Order < ActiveRecord::Base
   before_create :create_uuid
 
   def add_item(product_id)
-    item = Item.new(self.id, product_id)
+    item = Item.new
+    item.order_id = self.id
+    item.product_id= product_id
     item.save
   end
 
   def create_uuid
     value = get_value
-    while where(order_uuid: value ).present?
+    while Order.where(order_uuid: value ).present?
       value = get_value
     end
     self.order_uuid = value

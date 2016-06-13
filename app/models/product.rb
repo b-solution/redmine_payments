@@ -17,7 +17,7 @@ include Redmine::SafeAttributes
 
   def create_uuid
     value = get_value
-    while where(order_uuid: value ).present?
+    while Product.where(product_uuid: value ).present?
       value = get_value
     end
     self.product_uuid = value
