@@ -1,6 +1,9 @@
 class PaymentsController < ApplicationController
  unloadable
  include StripePayment
+ def verify_authenticity_token
+
+ end
 
  def  create_order
    card        = get_card_info(params)

@@ -2,8 +2,10 @@ class ProductsController < ApplicationController
   unloadable
 
   before_action :find_project_by_project_id, except: [:get_products]
-  # before_action :authorize, except: [:get_products]
+  before_action :verify_authenticity_token, only: [:get_products]
+  def verify_authenticity_token
 
+  end
 
   def index
     @limit = per_page_option
