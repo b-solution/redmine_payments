@@ -58,6 +58,9 @@ class PaymentsController < ApplicationController
    end
 
    cus_id = order.charge_id_stripe
+   if order.products.blank?
+     render json: {status: 'declined', error: 'no products'} and return
+   end
    price = order.products.map(&:price).sum
    currency = order.products.first.currency
    result = charge_customer(cus_id, price * 100, currency)
