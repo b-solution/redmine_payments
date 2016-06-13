@@ -26,17 +26,19 @@ class PaymentsController < ApplicationController
    order.save
 
    order_items.each do |item|
-     order.add_item(item)
+     product  = Product.where(product_uuid: item).first
+     order.add_item(product.id) if product
    end
-   attrs = order.attributes.merge('order_UUID' => order.id)
+   attrs = order.attributes
    render json: attrs.except(:id)
  end
 
  def add_item
    order_id    = params['orderUUID']
-   order       = Order.find(order_id)
-   product_id  = params['productUUID']
-   result      = order.add_item(product_id)
+   order = Order.where(order_uuid: order_id).first
+   product  = Product.where(product_uuid: params['productUUID']).first
+   result = nil
+   result      = order.add_item(product.id) if product
    json        = {saved: result ? 'ok' : 'fail' }
    order_items = order.products.map(&:id)
    json.merge!('redirect_url'=> order.redirect_url)
@@ -47,8 +49,11 @@ class PaymentsController < ApplicationController
  end
 
  def charge_order
-   order = Order.find(params['orderUUID'])
-   order.add_item(params['productUUID']) if params['productUUID']
+   order = Order.where(order_uuid: params['orderUUID']).first
+   if params['productUUID']
+     product  = Product.where(product_uuid: params['productUUID']).first
+     order.add_item(product.id)
+   end
 
    cus_id = order.charge_id_stripe
    price = order.products.map(&:price).sum

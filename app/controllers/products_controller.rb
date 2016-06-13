@@ -66,6 +66,9 @@ class ProductsController < ApplicationController
   def get_products
     currency = params[:currency]
     products = Product.where(currency: currency)
+    if products.blank?
+      products = Product.where(currency: 'usd')
+    end
     json = products.map{|product| product.attributes.merge!(productid: product.id) }
     render json: json
   end
