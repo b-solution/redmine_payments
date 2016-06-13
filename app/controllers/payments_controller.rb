@@ -3,12 +3,13 @@ class PaymentsController < ApplicationController
  include StripePayment
 
  def  create_order
-   card = get_card_info(params)
-   order= create_customer_order(card, params['chargeDescription'],  params[:email])
+   card        = get_card_info(params)
+   order       = create_customer_order(card, params['chargeDescription'],  params[:email])
+   order_items = params[:order_items]
+   currency    = params[:currency]
 
-   order_items= params[:order_items]
-   currency = params[:currency]
    order.redirect_url = params[:redirect_url]
+
    unless order.status.present?
      if params[:action] == 'authorize'
        amount = params[:amount].to_f * 100
@@ -32,15 +33,13 @@ class PaymentsController < ApplicationController
  end
 
  def add_item
-   order_id = params['orderUUID']
-   order = Order.find(order_id)
-   product_id = params['productUUID']
-   result = order.add_item(product_id)
-   json = {saved: result ? 'ok' : 'fail' }
-
-   redirection = order.redirect_to
+   order_id    = params['orderUUID']
+   order       = Order.find(order_id)
+   product_id  = params['productUUID']
+   result      = order.add_item(product_id)
+   json        = {saved: result ? 'ok' : 'fail' }
    order_items = order.products.map(&:id)
-   json.merge!('redirect_to'=> redirection)
+   json.merge!('redirect_url'=> order.redirect_url)
    json.merge!('order_items'=> order_items)
    render json: json
  rescue ActiveRecord::RecordNotFound
