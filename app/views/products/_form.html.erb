@@ -6,25 +6,36 @@
           <p>
             <%= f.text_field :title, {:required => true} %>
           </p>
+          <p>
+            <%= f.text_field :image_url, {:required => true} %>
+          </p>
 
           <p>
             <%= f.text_area :description, :cols => 60,:rows => (@product.description.blank? ? 10 : [[10, @product.description.length / 50].max, 100].min), :required => true  %>
           </p>
           <p>
-            <% currencies = ['usd', 'eur', 'cad'] %>
-            <%= f.select :currency, options_for_select(currencies, @product.currency), {:required => true} %>
+            <%= f.text_area :options, :cols => 60,:rows => (@product.options.blank? ? 10 : [[10, @product.options.length / 50].max, 100].min), :required => true  %>
           </p>
-          <p>
-            <%= f.number_field :price, {:required => true}  %>
-          </p>
+          <% Product::CURRENCIES.each do |currency| %>
+          <fieldset>
+            <% pc = @product.price_currencies.where(currency: currency).first_or_initialize %>
+            <legend><%= currency %></legend>
+            <p>
+              <label for="product_price">Price</label>
+              <%= number_field_tag "#{currency}[price]", pc.price  %>
+            </p>
 
-          <p>
-            <%= f.number_field :msrp, {:required => true}%>
-          </p>
+            <p>
+              <label for="product_price">MSRP</label>
+              <%= number_field_tag "#{currency}[msrp]", pc.msrp %>
+            </p>
 
-          <p>
-            <%= f.number_field :unit_price, {:required => true}  %>
-          </p>
+            <p>
+              <label for="product_unit_price">Unit Price</label>
+              <%= number_field_tag "#{currency}[[unit_price]", pc.unit_price %>
+            </p>
+          </fieldset>
+          <% end %>
 
       <% end %>
 
@@ -35,3 +46,4 @@
   </div>
 </div>
 <%= wikitoolbar_for 'product_description' %>
+<%= wikitoolbar_for 'product_options' %>

@@ -5,6 +5,7 @@
     <div class=" issue details">
       <div class="attributes">
 
+        <img src="<%= @product.image_url %>" alt="image" >
         <div class="splitcontent">
           <div class="attribute">
             <div class='label'><%= l(:field_description) %></div>
@@ -12,20 +13,8 @@
 
           </div>
           <div class="attribute">
-            <div class='label'><%= l(:field_price) %></div>
-            <%= @product.price %>
-          </div>
-          <div class="attribute">
-            <div class='label'><%= l(:field_unit_price) %></div>
-            <%= @product.unit_price %>
-          </div>
-          <div class="attribute">
-            <div class='label'><%= l(:field_msrp) %></div>
-            <%= @product.msrp %>
-          </div>
-          <div class="attribute">
-            <div class='label'><%= l(:field_currency) %></div>
-            <%= @product.currency %>
+            <div class='label'><%= l(:field_options) %></div>
+            <%= @product.options %>
           </div>
         </div>
       </div>

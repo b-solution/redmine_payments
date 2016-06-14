@@ -9,7 +9,8 @@ class Order < ActiveRecord::Base
   safe_attributes 'charge_id_stripe',
                   'status',
                   'customer_uuid',
-                  'redirect_url'
+                  'redirect_url',
+                  'currency'
 
   before_create :create_uuid
 
@@ -20,6 +21,12 @@ class Order < ActiveRecord::Base
     item.save
   end
 
+  def total_price
+    if currency and products.present?
+      products.map{|product| product.price(currency)}.sum
+    end
+  end
+
   def create_uuid
     value = get_value
     while Order.where(order_uuid: value ).present?
@@ -27,6 +34,7 @@ class Order < ActiveRecord::Base
     end
     self.order_uuid = value
   end
+
 
   def get_value
     o = [('a'..'z')].map { |i| i.to_a * 2 }.flatten.shuffle.first(2).join

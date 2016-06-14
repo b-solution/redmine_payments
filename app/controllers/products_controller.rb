@@ -3,6 +3,8 @@ class ProductsController < ApplicationController
 
   before_action :find_project_by_project_id, except: [:get_products]
   before_action :verify_authenticity_token, only: [:get_products]
+
+
   def verify_authenticity_token
 
   end
@@ -25,6 +27,13 @@ class ProductsController < ApplicationController
     @product = Product.new(project_id: @project.id)
     @product.safe_attributes = params[:product].permit!
     if @product.save
+      Product::CURRENCIES.each do |currency|
+        price = PriceCurrency.new
+        price.currency = currency
+        price.product_id = @product.id
+        price.safe_attributes = params[currency].permit!
+        price.save
+      end
       redirect_to project_product_path(@project, @product)
     else
       render 'new'
@@ -47,6 +56,13 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
     @product.safe_attributes = params[:product].permit!
     if @product.save
+      Product::CURRENCIES.each do |currency|
+        price = @product.price_currencies.where(currency: currency).first_or_initialize
+        price.currency = currency
+        price.product_id = @product.id
+        price.safe_attributes = params[currency].permit!
+        price.save
+      end
       redirect_to project_product_path(@project, @product)
     else
       render 'edit'
@@ -67,11 +83,12 @@ class ProductsController < ApplicationController
 
   def get_products
     currency = params[:currency]
-    products = Product.where(currency: currency)
-    if products.blank?
-      products = Product.where(currency: 'usd')
+    pcs = PriceCurrency.where(currency: currency)
+
+    if pcs.blank?
+      pcs = PriceCurrency.where(currency: 'usd')
     end
-    json = products.map{|product| product.attributes.merge!(productid: product.id) }
+    json = pcs.map{|pc| pc.to_json }
     render json: json
   end
 

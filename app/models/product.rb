@@ -1,26 +1,37 @@
 class Product < ActiveRecord::Base
   unloadable
+
+  CURRENCIES = ['usd',  'aud',  'gbp',  'nzd',  'eur',  'mxn',
+                'cop',  'brl',  'sgd',  'inr',  'php',  'ars',  'clp',  'zar',
+                'sek',  'dkk',  'aed',  'sar',  'nok',  'egp',  'isk',  'rub',
+                'ngn',  'chf',  'krw',  'hkd',  'twd']
   
-include Redmine::SafeAttributes
+  include Redmine::SafeAttributes
   
-  safe_attributes   'title', 'description',   'price',    'msrp',
-                    'unit_price',    'currency',  'project_id'
+  safe_attributes   'title', 'description', 'project_id', 'image_url', 'options'
 
   has_many :items
   has_many :orders, :through => :items
 
+  has_many :price_currencies
 
-  validates_presence_of :title, :description, :price, :msrp,
-                        :unit_price, :currency, :project_id
+
+  validates_presence_of :title, :description,:options, :image_url, :project_id
 
   before_create :create_uuid
+
+  def price(currency)
+    price = price_currencies.where(currency: currency).first
+    price ? price.price : 0
+  end
 
   def create_uuid
     value = get_value
     while Product.where(product_uuid: value ).present?
       value = get_value
     end
-    self.product_uuid = value
+    self.product_sku = value
+    self.product_uuid = UUID.new.generate
   end
 
   def get_value

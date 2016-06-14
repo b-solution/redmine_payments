@@ -26,6 +26,8 @@ class PaymentsController < ApplicationController
        order.status = 'capture'
      end
    end
+
+   order.currency = currency
    order.save
 
    if order_items.present? and order_items.is_a?(Array)
