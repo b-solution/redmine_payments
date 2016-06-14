@@ -8,7 +8,7 @@ class Product < ActiveRecord::Base
   
   include Redmine::SafeAttributes
   
-  safe_attributes   'title', 'description', 'project_id', 'image_url', 'options'
+  safe_attributes   'title', 'description', 'project_id', 'image_url', 'options', 'thumbnail', 'original'
 
   has_many :items
   has_many :orders, :through => :items
@@ -16,7 +16,7 @@ class Product < ActiveRecord::Base
   has_many :price_currencies
 
 
-  validates_presence_of :title, :description,:options, :image_url, :project_id
+  validates_presence_of :title, :description,:options, :project_id
 
   before_create :create_uuid
 

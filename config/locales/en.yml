@@ -7,4 +7,6 @@ en:
   field_unit_price: 'unit price'
   field_currency: 'currency'
   field_options: 'Options'
-  field_image_url: 'Image url'
+  field_image_url: 'Lead image url'
+  field_thumbnail: 'Thumbnail url'
+  field_original: 'Image Original url'
