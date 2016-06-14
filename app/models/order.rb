@@ -24,6 +24,8 @@ class Order < ActiveRecord::Base
   def total_price
     if currency and products.present?
       products.map{|product| product.price(currency)}.sum
+    else
+      0
     end
   end
 
