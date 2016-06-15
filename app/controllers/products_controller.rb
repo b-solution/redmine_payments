@@ -77,6 +77,7 @@ class ProductsController < ApplicationController
 
   def set_payment_type
     @project.payment_type = params[:payment_type].first
+    @project.stripe_key = params[:stripe_key]
     @project.save
     redirect_to :back
   end

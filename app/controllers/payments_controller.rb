@@ -7,8 +7,14 @@ class PaymentsController < ApplicationController
 
  def  create_order
    card        = get_card_info(params)
-   order       = create_customer_order(card, params['chargeDescription'],  params[:email])
+   order = Order.new
    order_items = params[:order_items]
+   if order_items.present? and order_items.is_a?(Array)
+     product  = Product.where(product_uuid: order_items.first).first
+     order.project_id = product.project_id
+   end
+   order       = create_customer_order(order, card, params['chargeDescription'],  params[:email])
+
    currency    = params[:currency]
 
    order.redirect_url = params[:redirect_url]
@@ -16,7 +22,7 @@ class PaymentsController < ApplicationController
    unless order.status.present?
      if params[:action] == 'authorize'
        amount = params[:amount].to_f * 100
-       result = charge_customer(order.charge_id_stripe, amount.to_i, currency)
+       result = charge_customer(order, amount.to_i, currency)
        if result['paid']
          order.status = 'paid'
        else
@@ -61,14 +67,12 @@ class PaymentsController < ApplicationController
      product  = Product.where(product_uuid: params['productUUID']).first
      order.add_item(product.id)
    end
-
-   cus_id = order.charge_id_stripe
    if order.products.blank?
      render json: {status: 'declined', error: 'no products'} and return
    end
    price = order.total_price
    currency = order.currency
-   result = charge_customer(cus_id, price * 100, currency)
+   result = charge_customer(order, price * 100, currency)
    json= {redirect_url: params[:redirect_url]}
    if result['paid']
      json.merge!(status: 'paid')

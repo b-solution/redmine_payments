@@ -1,10 +1,14 @@
 module StripePayment
   require "stripe"
-  Stripe.api_key = $payment_settings['stripe']['secret_key']
 
-  def create_customer_order(card, desc, email)
+  def set_key_api(order)
+    stripe_key = order.project.stripe_key
+    Stripe.api_key = stripe_key
+  end
+
+  def create_customer_order(order, card, desc, email)
+    set_key_api(order)
     customer_uuid = Order.new.get_value
-    order = Order.new
     order.customer_uuid = customer_uuid
     begin
       cus= Stripe::Customer.create(
@@ -21,7 +25,9 @@ module StripePayment
     order
   end
 
-  def charge_customer(cus_id, price, currency)
+  def charge_customer(order, price, currency)
+    set_key_api(order)
+    cus_id = order.charge_id_stripe
     Stripe::Charge.create(
         :amount => price.to_i,
         :currency => currency,

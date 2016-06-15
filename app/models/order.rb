@@ -4,13 +4,16 @@ class Order < ActiveRecord::Base
   has_many :items
   has_many :products, through: :items
 
+  belongs_to :project
+
   include Redmine::SafeAttributes
   
   safe_attributes 'charge_id_stripe',
                   'status',
                   'customer_uuid',
                   'redirect_url',
-                  'currency'
+                  'currency',
+                  'project_id'
 
   before_create :create_uuid
 

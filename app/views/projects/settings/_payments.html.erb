@@ -1,5 +1,10 @@
 <%= form_tag(project_products_set_payment_type_path(@project), :class => "tabular") do %>
     <p>
+      <label for="stripe_key">Stripe key</label>
+      <%= text_field_tag 'stripe_key',  @project.stripe_key   %>
+    </p>
+    <p>
+      <label for="payment_type">Payment Type</label>
       <%= check_box_tag 'payment_type[]', "Stripe", @project.payment_type == "Stripe"  %> Stripe
     </p>
     <p>
