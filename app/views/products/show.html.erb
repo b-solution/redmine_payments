@@ -9,13 +9,33 @@
         <div class="splitcontent">
           <div class="attribute">
             <div class='label'><%= l(:field_description) %></div>
+            <%= @product.slug %>
+          </div>
+          <div class="attribute">
+            <div class='label'><%= l(:field_description) %></div>
             <%= @product.description %>
-
           </div>
           <div class="attribute">
             <div class='label'><%= l(:field_options) %></div>
             <%= @product.options %>
           </div>
+          <div class="attribute">
+            <div class='label'><%= l(:field_group) %></div>
+            <%= @product.group %>
+          </div>
+          <% Product::CURRENCIES.each do |currency| %>
+              <% pc = @product.price_currencies.where(currency: currency).first
+                 if pc
+              %>
+                  <fieldset>
+                    <legend><%= currency %></legend>
+                    <div class="attribute">
+                      <%= pc.price %>
+                    </div>
+                  </fieldset>
+              <% end %>
+          <% end %>
+
         </div>
       </div>
     </div>
