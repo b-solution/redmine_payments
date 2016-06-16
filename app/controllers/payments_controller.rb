@@ -9,6 +9,9 @@ class PaymentsController < ApplicationController
    card        = get_card_info(params)
    order = Order.new
    order_items = params[:order_items]
+   unless order_items.present? and order_items.is_a?(Array)
+     order_items = order_items.scan(/([a-z0-9-]+)/).flatten
+   end
    if order_items.present? and order_items.is_a?(Array)
      product  = Product.where(product_uuid: order_items.first).first
      order.project_id = product.project_id
@@ -20,7 +23,7 @@ class PaymentsController < ApplicationController
    order.redirect_url = params[:redirect_url]
 
    unless order.status.present?
-     if params[:action] == 'authorize'
+     if params[:action_payment] == 'authorize'
        amount = params[:amount].to_f * 100
        result = charge_customer(order, amount.to_i, currency)
        if result['paid']
