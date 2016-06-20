@@ -34,9 +34,9 @@ class Order < ActiveRecord::Base
 
   def create_uuid
     value = get_value
-    while Order.where(order_uuid: value ).present?
-      value = get_value
-    end
+    # while Order.where(order_uuid: value ).present?
+    #   value = get_value
+    # end
     self.order_uuid = value
   end
 
@@ -47,4 +47,5 @@ class Order < ActiveRecord::Base
     # nume = [(0..9)].map { |i| i.to_a * 4 }.flatten.shuffle.first(4).join
     # "#{o}#{nume}"
   end
+
 end

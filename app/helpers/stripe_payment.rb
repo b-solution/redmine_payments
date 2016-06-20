@@ -8,7 +8,7 @@ module StripePayment
 
   def create_customer_order(order, card, desc, email)
     set_key_api(order)
-    customer_uuid = Order.new.get_value
+    customer_uuid = UUID.new.generate
     order.customer_uuid = customer_uuid
     order.save
     begin
