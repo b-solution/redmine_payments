@@ -9,12 +9,15 @@ class PaymentsController < ApplicationController
    card        = get_card_info(params)
    order = Order.new
    order_items = params[:order_items]
-   unless order_items.present? and order_items.is_a?(Array)
-     order_items = order_items.scan(/([a-z0-9-]+)/).flatten
+   unless order_items.is_a?(Array)
+     order_items = order_items.to_s.scan(/([a-z0-9-]+)/).flatten
    end
    if order_items.present? and order_items.is_a?(Array)
      product  = Product.where(product_uuid: order_items.first).first
-     order.project_id = product.project_id
+     order.project_id = product.project_id if product
+   end
+   if order.project_id.nil?
+     render json: {error: 'product not found, check admin'}
    end
    order       = create_customer_order(order, card, params['chargeDescription'],  params[:email])
 
