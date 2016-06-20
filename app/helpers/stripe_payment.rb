@@ -10,12 +10,14 @@ module StripePayment
     set_key_api(order)
     customer_uuid = Order.new.get_value
     order.customer_uuid = customer_uuid
+    order.save
     begin
-      cus= Stripe::Customer.create(
+      cus = Stripe::Customer.create(
           card: card,
           description: desc,
           email: email,
-          metadata: {customer_uuid: customer_uuid}
+          metadata: {customer_uuid: customer_uuid,
+                     order_id: order.id}
       )
       order.charge_id_stripe = cus.id
     rescue Stripe::InvalidRequestError => e

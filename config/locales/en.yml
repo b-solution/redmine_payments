@@ -11,3 +11,4 @@ en:
   field_thumbnail: 'Thumbnail url'
   field_original: 'Image Original url'
   field_group: 'Group'
+  field_slug: 'slug'
