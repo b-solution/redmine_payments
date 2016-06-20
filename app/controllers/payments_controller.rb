@@ -49,7 +49,7 @@ class PaymentsController < ApplicationController
      end
    end
    attrs = order.attributes
-   render json: attrs.except(:id)
+   render json: attrs
  end
 
  def add_item

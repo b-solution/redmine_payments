@@ -42,8 +42,9 @@ class Order < ActiveRecord::Base
 
 
   def get_value
-    o = [('a'..'z')].map { |i| i.to_a * 2 }.flatten.shuffle.first(2).join
-    nume = [(0..9)].map { |i| i.to_a * 4 }.flatten.shuffle.first(4).join
-    "#{o}#{nume}"
+    UUID.new.generate
+    # o = [('a'..'z')].map { |i| i.to_a * 2 }.flatten.shuffle.first(2).join
+    # nume = [(0..9)].map { |i| i.to_a * 4 }.flatten.shuffle.first(4).join
+    # "#{o}#{nume}"
   end
 end
