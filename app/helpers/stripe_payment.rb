@@ -31,7 +31,7 @@ module StripePayment
     set_key_api(order)
     cus_id = order.charge_id_stripe
     Stripe::Charge.create(
-        :amount => price.to_i,
+        :amount => price.to_i * 100,
         :currency => currency,
         :customer => cus_id
     )

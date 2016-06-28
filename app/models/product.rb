@@ -41,4 +41,11 @@ class Product < ActiveRecord::Base
     nume = [(0..9)].map { |i| i.to_a * 4 }.flatten.shuffle.first(4).join
     "#{o}#{nume}"
   end
+
+  def to_json(currency)
+    price = price_currencies.where(currency: currency).first || PriceCurrency.new(currency: currency)
+    json = attributes
+    p = json.merge!(price.attributes.except(:id))
+    json.merge(p)
+  end
 end

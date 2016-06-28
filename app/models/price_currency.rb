@@ -7,9 +7,5 @@ class PriceCurrency < ActiveRecord::Base
 
   validates_presence_of :price, :unit_price, :currency, :msrp
 
-  def to_json
-    json = attributes.except(:id)
-    p = product.attributes.except(:id)
-    json.merge(p)
-  end
+
 end

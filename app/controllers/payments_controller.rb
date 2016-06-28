@@ -1,6 +1,7 @@
 class PaymentsController < ApplicationController
  unloadable
  include StripePayment
+
  def verify_authenticity_token
 
  end
@@ -21,14 +22,17 @@ class PaymentsController < ApplicationController
    end
    order       = create_customer_order(order, card, params['chargeDescription'],  params[:email])
 
-   currency    = params[:currency]
-
+   currency    = params[:currency].presence || 'usd'
+   unless Product::CURRENCIES.include?(currency)
+     currency = 'usd'
+   end
    order.redirect_url = params[:redirect_url]
 
    unless order.status.present?
      if params[:action_payment] == 'authorize'
-       amount = params[:amount].to_f * 100
-       result = charge_customer(order, amount.to_i, currency)
+       # amount = params[:amount].to_f
+       order.get_amount(currency)
+       result = charge_customer(order, amount, currency)
        if result['paid']
          order.status = 'paid'
        else
@@ -76,9 +80,10 @@ class PaymentsController < ApplicationController
    if order.products.blank?
      render json: {status: 'declined', error: 'no products'} and return
    end
-   price = order.total_price
+
    currency = order.currency
-   result = charge_customer(order, price * 100, currency)
+   price = order.get_amount(currency)
+   result = charge_customer(order, price , currency)
    json= {redirect_url: params[:redirect_url]}
    if result['paid']
      json.merge!(status: 'paid')

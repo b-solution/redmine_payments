@@ -84,12 +84,11 @@ class ProductsController < ApplicationController
 
   def get_products
     currency = params[:currency]
-    scope = PriceCurrency.where(currency: currency).includes(:product).references(:product)
-
-    if scope.blank?
-      scope = PriceCurrency.where(currency: 'usd').
-          includes(:product).references(:product)
+    unless Product::CURRENCIES.include?(currency)
+     currency = 'usd'
     end
+    scope = Product
+
 
     if params[:group]
      scope = scope.where('products.group = ?', params[:group])
@@ -107,7 +106,8 @@ class ProductsController < ApplicationController
       scope = scope.where('products.active = ?', true)
     end
 
-    json = scope.map{|pc| pc.to_json }
+
+    json = scope.map{|pc| pc.to_json(currency) }
     render json: json
   end
 

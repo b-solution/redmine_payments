@@ -40,6 +40,13 @@ class Order < ActiveRecord::Base
     self.order_uuid = value
   end
 
+  def get_amount(currency)
+    products.map{|product|
+      p = product.price_currencies.where(currency: currency).first || PriceCurrency.new(currency: currency)
+      p.price.to_f
+    }.compact.sum
+  end
+
 
   def get_value
     UUID.new.generate
