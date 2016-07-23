@@ -17,11 +17,16 @@ Redmine::Plugin.register :redmine_payments do
   $payment_settings = YAML::load(File.open("#{File.dirname(__FILE__)}/config/setting.yml"))
 
 end
+
 Rails.application.config.to_prepare do
   Project.send(:include, RedminePayment::ProjectPatch)
   ProjectsHelper.send(:include, RedminePayment::ProjectsHelperPatch)
 
 end
+Rails.application.config.action_dispatch.default_headers.merge!({
+                                                                    'Access-Control-Allow-Origin' => '*',
+                                                                    'Access-Control-Request-Method' => '*'
+                                                                })
 
 
 
