@@ -87,7 +87,7 @@ class ProductsController < ApplicationController
     unless Product::CURRENCIES.include?(currency)
      currency = 'usd'
     end
-    scope = Product
+    scope = Product.where(nil)
 
 
     if params[:group]
