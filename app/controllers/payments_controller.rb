@@ -7,8 +7,8 @@ class PaymentsController < ApplicationController
   end
 
   def  create_order
-    if params[:number].nil?
-      render status: :ok
+    if request.options?
+      render partial: 'index.html.erb'
     else
       card        = get_card_info(params)
       order = Order.new
@@ -61,52 +61,64 @@ class PaymentsController < ApplicationController
   end
 
   def add_item
-    order_id    = params['orderUUID']
-    order = Order.where(order_uuid: order_id).first
-    product  = Product.where(product_uuid: params['productUUID']).first
-    result = nil
-    result      = order.add_item(product.id) if product
-    json        = {saved: result ? 'ok' : 'fail' }
-    order_items = order.products.map(&:id)
-    json.merge!('redirect_url'=> order.redirect_url)
-    json.merge!('order_items'=> order_items)
-    render json: json
+    if request.options?
+      render partial: 'index.html.erb'
+    else
+      order_id    = params['orderUUID']
+      order = Order.where(order_uuid: order_id).first
+      product  = Product.where(product_uuid: params['productUUID']).first
+      result = nil
+      result      = order.add_item(product.id) if product
+      json        = {saved: result ? 'ok' : 'fail' }
+      order_items = order.products.map(&:id)
+      json.merge!('redirect_url'=> order.redirect_url)
+      json.merge!('order_items'=> order_items)
+      render json: json
+    end
   rescue ActiveRecord::RecordNotFound
     render json: {record_not_foud: true}
   end
 
   def charge_order
-    order = Order.where(order_uuid: params['orderUUID']).first
-    if params['productUUID']
-      product  = Product.where(product_uuid: params['productUUID']).first
-      order.add_item(product.id)
-    end
-    if order.products.blank?
-      render json: {status: 'declined', error: 'no products'} and return
-    end
-
-    currency = order.currency
-    price = order.get_amount(currency)
-    result = charge_customer(order, price , currency)
-    json= {redirect_url: params[:redirect_url]}
-    if result['paid']
-      json.merge!(status: 'paid')
+    if request.options?
+      render partial: 'index.html.erb'
     else
-      json.merge!(status: 'declined')
+      order = Order.where(order_uuid: params['orderUUID']).first
+      if params['productUUID']
+        product  = Product.where(product_uuid: params['productUUID']).first
+        order.add_item(product.id)
+      end
+      if order.products.blank?
+        render json: {status: 'declined', error: 'no products'} and return
+      end
+
+      currency = order.currency
+      price = order.get_amount(currency)
+      result = charge_customer(order, price , currency)
+      json= {redirect_url: params[:redirect_url]}
+      if result['paid']
+        json.merge!(status: 'paid')
+      else
+        json.merge!(status: 'declined')
+      end
+      render json: json
     end
-    render json: json
   rescue ActiveRecord::RecordNotFound
     render json: {record_not_foud: true}
   end
 
   def add_lead
-    lead = params[:lead]
-    redirection = lead[:redirect_to]
-    redmine_lead = RedmineLead.new
-    redmine_lead.safe_attributes = lead.permit!
-    json = redmine_lead.save ? {saved: true} : {saved: false}
-    json.merge!(:redirect_to=> redirection)
-    render json: json
+    if request.options?
+      render partial: 'index.html.erb'
+    else
+      lead = params[:lead]
+      redirection = lead[:redirect_to]
+      redmine_lead = RedmineLead.new
+      redmine_lead.safe_attributes = lead.permit!
+      json = redmine_lead.save ? {saved: true} : {saved: false}
+      json.merge!(:redirect_to=> redirection)
+      render json: json
+    end
   end
 
   private
