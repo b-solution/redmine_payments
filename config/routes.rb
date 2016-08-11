@@ -8,12 +8,12 @@ get 'add_lead', controller: 'payments', action: 'add_lead'
 
 get 'get_products', controller: 'products', action: 'get_products'
 
-post 'create_order', controller: 'payments', action: 'create_order'
-post'add_item', controller: 'payments', action: 'add_item'
-post 'charge_order', controller: 'payments', action: 'charge_order'
-post 'add_lead', controller: 'payments', action: 'add_lead'
+post 'create_order', controller: 'payments', action: 'create_order', via: :options
+post'add_item', controller: 'payments', action: 'add_item' , via: :options
+post 'charge_order', controller: 'payments', action: 'charge_order', via: :options
+post 'add_lead', controller: 'payments', action: 'add_lead', via: :options
 
-post 'get_products', controller: 'products', action: 'get_products'
+post 'get_products', controller: 'products', action: 'get_products', via: :options
 
 resources :projects do
   resources :products do
