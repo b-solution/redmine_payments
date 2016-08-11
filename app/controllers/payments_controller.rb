@@ -18,7 +18,7 @@ class PaymentsController < ApplicationController
      order.project_id = product.project_id if product
    end
    if order.project_id.nil?
-     render json: {error: 'product not found, check admin'}
+     render json: {error: 'product not found, check admin'} && return
    end
    order       = create_customer_order(order, card, params['chargeDescription'],  params[:email])
 

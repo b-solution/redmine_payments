@@ -2,12 +2,12 @@
 # See: http://guides.rubyonrails.org/routing.html
 
 
-post 'create_order', controller: 'payments', action: 'create_order', via: :options
-post'add_item', controller: 'payments', action: 'add_item' , via: :options
-post 'charge_order', controller: 'payments', action: 'charge_order', via: :options
-post 'add_lead', controller: 'payments', action: 'add_lead', via: :options
+match 'create_order', controller: 'payments', action: 'create_order', via: :options
+match'add_item', controller: 'payments', action: 'add_item' , via: :options
+match 'charge_order', controller: 'payments', action: 'charge_order', via: :options
+match 'add_lead', controller: 'payments', action: 'add_lead', via: :options
 
-post 'get_products', controller: 'products', action: 'get_products', via: :options
+match 'get_products', controller: 'products', action: 'get_products', via: :options
 
 get 'create_order', controller: 'payments', action: 'create_order'
 get 'add_item', controller: 'payments', action: 'add_item'
