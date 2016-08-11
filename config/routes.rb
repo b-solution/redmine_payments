@@ -2,20 +2,11 @@
 # See: http://guides.rubyonrails.org/routing.html
 
 
-match 'create_order', controller: 'payments', action: 'create_order', via: :options
-match'add_item', controller: 'payments', action: 'add_item' , via: :options
-match 'charge_order', controller: 'payments', action: 'charge_order', via: :options
-match 'add_lead', controller: 'payments', action: 'add_lead', via: :options
-
-match 'get_products', controller: 'products', action: 'get_products', via: :options
-
-get 'create_order', controller: 'payments', action: 'create_order'
-get 'add_item', controller: 'payments', action: 'add_item'
-get 'charge_order', controller: 'payments', action: 'charge_order'
-get 'add_lead', controller: 'payments', action: 'add_lead'
-
-get 'get_products', controller: 'products', action: 'get_products'
-
+match 'create_order', controller: 'payments', action: 'create_order', via: [:options, :post, :get ]
+match'add_item', controller: 'payments', action: 'add_item' , via: [:options, :post, :get ]
+match 'charge_order', controller: 'payments', action: 'charge_order', via: [:options, :post, :get ]
+match 'add_lead', controller: 'payments', action: 'add_lead', via: [:options, :post, :get ]
+match 'get_products', controller: 'products', action: 'get_products', via: [:options, :post, :get ]
 
 resources :projects do
   resources :products do
