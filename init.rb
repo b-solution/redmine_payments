@@ -25,7 +25,8 @@ Rails.application.config.to_prepare do
 end
 Rails.application.config.action_dispatch.default_headers.merge!({
                                                                     'Access-Control-Allow-Origin' => '*',
-                                                                    'Access-Control-Request-Method' => '*'
+                                                                    'Access-Control-Request-Method' => '*',
+                                                                    'Access-Control-Allow-Headers' => '*'
                                                                 })
 
 
